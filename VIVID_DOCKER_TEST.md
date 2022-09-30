@@ -1,3 +1,5 @@
+# Debug environment for testing clique modifications in a docker
+```
 docker build -t geth-test .
 docker run -it -p 8545:8545 --name vivid geth-test
 
@@ -10,4 +12,4 @@ geth attach
 # geth console. Check some commands
 eth.accounts[0]
 clique.status()
-
+```
