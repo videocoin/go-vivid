@@ -38,7 +38,7 @@ ENV bootnodeIp=""
 EXPOSE 8545 8546 30303 30303/udp
 #ENTRYPOINT ["geth"]
 #CMD exec geth --bootnodes "enode://$bootnodeId@$bootnodeIp:30301" --networkid="500" --verbosity=4 --rpc --rpcaddr "0.0.0.0" --rpcapi "eth,web3,personal,net,miner,admin,debug,db" --rpccorsdomain "*" --syncmode=full --etherbase $address
-CMD exec geth  --networkid="90009" --verbosity=4  --http --http.addr "0.0.0.0" --http.api "eth,web3,personal,net,miner,admin,debug,db" --http.corsdomain "*" --syncmode=full --miner.etherbase $address --mine --allow-insecure-unlock --unlock $address --password ~/.accountpassword --miner.gasprice "0"
+CMD exec geth  --networkid="90009" --verbosity=4  --http --http.addr "0.0.0.0" --http.api "eth,web3,personal,net,miner,admin,debug,db,clique" --http.corsdomain "*" --syncmode=full --miner.etherbase $address --mine --allow-insecure-unlock --unlock $address --password ~/.accountpassword --miner.gasprice "0"
 
 
 # Add some metadata labels to help programatic image consumption
