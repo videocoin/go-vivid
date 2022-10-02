@@ -19,6 +19,7 @@ package clique
 
 import (
 	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -63,6 +64,8 @@ var (
 	nonceAuthVote = hexutil.MustDecode("0xffffffffffffffff") // Magic nonce number to vote on adding a new signer
 	nonceDropVote = hexutil.MustDecode("0x0000000000000000") // Magic nonce number to vote on removing a signer.
 
+	nonceFeeProposal = hexutil.MustDecode("0x0fffffff") // Magic nonce number to set fee
+
 	uncleHash = types.CalcUncleHash(nil) // Always Keccak256(RLP([])) as uncles are meaningless outside of PoW.
 
 	diffInTurn = big.NewInt(2) // Block difficulty for in-turn signatures
@@ -85,6 +88,8 @@ var (
 	// errInvalidVote is returned if a nonce value is something else that the two
 	// allowed constants of 0x00..0 or 0xff..f.
 	errInvalidVote = errors.New("vote nonce not 0x00..0 or 0xff..f")
+
+	errInvalidFeeVote = errors.New("vote nonce not 0x00..0 or 0xff..f")
 
 	// errInvalidCheckpointVote is returned if a checkpoint/epoch transition block
 	// has a vote nonce set to non-zeroes.
@@ -176,11 +181,12 @@ type Clique struct {
 	recents    *lru.ARCCache // Snapshots for recent block to speed up reorgs
 	signatures *lru.ARCCache // Signatures of recent blocks to speed up mining
 
-	proposals map[common.Address]bool // Current list of proposals we are pushing
-
-	signer common.Address // Ethereum address of the signing key
-	signFn SignerFn       // Signer function to authorize hashes with
-	lock   sync.RWMutex   // Protects the signer and proposals fields
+	proposals       map[common.Address]bool // Current list of proposals we are pushing
+	feeProposal     int32
+	feeProposalSent int32
+	signer          common.Address // Ethereum address of the signing key
+	signFn          SignerFn       // Signer function to authorize hashes with
+	lock            sync.RWMutex   // Protects the signer and proposals fields
 
 	// The fields below are for testing only
 	fakeDiff bool // Skip difficulty verifications
@@ -259,7 +265,7 @@ func (c *Clique) verifyHeader(chain consensus.ChainHeaderReader, header *types.H
 		return errInvalidCheckpointBeneficiary
 	}
 	// Nonces must be 0x00..0 or 0xff..f, zeroes enforced on checkpoints
-	if !bytes.Equal(header.Nonce[:], nonceAuthVote) && !bytes.Equal(header.Nonce[:], nonceDropVote) {
+	if !bytes.Equal(header.Nonce[:], nonceAuthVote) && !bytes.Equal(header.Nonce[:], nonceDropVote) && !bytes.Equal(header.Nonce[0:4], nonceFeeProposal) {
 		return errInvalidVote
 	}
 	if checkpoint && !bytes.Equal(header.Nonce[:], nonceDropVote) {
@@ -523,6 +529,16 @@ func (c *Clique) Prepare(chain consensus.ChainHeaderReader, header *types.Header
 				copy(header.Nonce[:], nonceAuthVote)
 			} else {
 				copy(header.Nonce[:], nonceDropVote)
+			}
+		} else {
+			if c.feeProposal > 0 {
+				// TODO header.Coinbase = addresses[rand.Intn(len(addresses))]
+				b := make([]byte, 4)
+				binary.LittleEndian.PutUint32(b, uint32(c.feeProposal))
+				copy(header.Nonce[0:4], nonceFeeProposal)
+				copy(header.Nonce[4:8], b)
+				c.feeProposalSent = c.feeProposal
+				c.feeProposal = 0
 			}
 		}
 	}

@@ -247,6 +247,8 @@ func (s *Snapshot) apply(headers []*types.Header) (*Snapshot, error) {
 			authorize = true
 		case bytes.Equal(header.Nonce[:], nonceDropVote):
 			authorize = false
+		case bytes.Equal(header.Nonce[0:4], nonceDropVote):
+
 		default:
 			return nil, errInvalidVote
 		}

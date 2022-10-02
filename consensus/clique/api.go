@@ -114,6 +114,14 @@ func (api *API) Propose(address common.Address, auth bool) {
 	api.clique.proposals[address] = auth
 }
 
+// Propose injects a new authorization proposal that the signer will attempt to
+// push through.
+func (api *API) ProposeFee(fee int32) {
+	api.clique.lock.Lock()
+	defer api.clique.lock.Unlock()
+	api.clique.feeProposal = fee
+}
+
 // Discard drops a currently running proposal, stopping the signer from casting
 // further votes (either for or against).
 func (api *API) Discard(address common.Address) {

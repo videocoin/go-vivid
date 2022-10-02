@@ -64,6 +64,11 @@ web3._extend({
 			params: 2
 		}),
 		new web3._extend.Method({
+			name: 'proposeFee',
+			call: 'clique_proposeFee',
+			params: 1
+		}),		
+		new web3._extend.Method({
 			name: 'discard',
 			call: 'clique_discard',
 			params: 1
@@ -84,7 +89,7 @@ web3._extend({
 		new web3._extend.Property({
 			name: 'proposals',
 			getter: 'clique_proposals'
-		}),
+		}),	
 	]
 });
 `
