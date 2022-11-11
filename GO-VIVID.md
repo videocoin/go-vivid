@@ -129,6 +129,8 @@ docker build -t gvivid-bootnode -f ./Dockerfile.bootnode .
 docker run -it --env extip=192.168.0.141 --env verbosity=5 -p 30301:30301/udp gvivid-bootnode
 
 # build and run node1
+docker build --build-arg password=vcn123 --build-arg  privatekey=6208a98d1f31430fa51a37b89a0016b842d8570d7e3da0bac7ca5e11bc96b2f6  -t gvivid-node1 .
+
 docker volume create --name vivid1-data
 
 docker run -it -d -v vivid1-data:/root/.ethereum -p 8545:8545 -p 30304:30304 --env address=0x789eeac8071ce0faae85a97cdd83f4677524d74d  \
@@ -136,6 +138,8 @@ docker run -it -d -v vivid1-data:/root/.ethereum -p 8545:8545 -p 30304:30304 --e
 --env bootnodeIp=$bootnodeIp --env p2port=30304 --name vivid1 gvivid-node1
 
 # build and run node2
+docker build --build-arg password=vcn123 --build-arg  privatekey=36d5f32dddc0097f3f895a0c4f42530a010c039bb003ff52c3f4b5984f8050ee  -t gvivid-node2 .
+
 docker volume create --name vivid2-data
 
 docker run -it -d -v vivid2-data:/root/.ethereum -p 8546:8545 -p 30305:30305 --env address=0x0e32574b1ea5280168916aae8c8ab330d836e5c8 \
@@ -143,6 +147,7 @@ docker run -it -d -v vivid2-data:/root/.ethereum -p 8546:8545 -p 30305:30305 --e
 --env bootnodeIp=$bootnodeIp --env p2port=30305 --name vivid2 gvivid-node2
 
 # build and run node3
+docker build --build-arg password=vcn123 --build-arg  privatekey=78df575164c9e31dc27c0ff059a3714dec2a99c91b07e2bd814c4f0356dfce51  -t gvivid-node3 .
 docker volume create --name vivid3-data
 
 docker run -it -d -v vivid3-data:/root/.ethereum -p 8547:8545 -p 30306:30306 --env address=0x1f2192fce51f9bd96a37a4df09af4791ab0d0916  \
