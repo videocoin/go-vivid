@@ -1,3 +1,7 @@
+
+## Go Vivid 
+[Instructions](./GO-VIVID.md)
+---
 ## Go Ethereum
 
 Official Golang implementation of the Ethereum protocol.

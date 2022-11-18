@@ -119,10 +119,32 @@ clique.getSigners()
 
 # Testnet Setup
 
+## Run Single test node
+```
+cp genesis_test/genesis_sealers_1.json ./genesis.json
+docker build -t geth-test .
+docker run -it -p 8545:8545 --name vivid geth-test
+
+docker exec -it vivid /bin/sh
+
+# shell in vivid container
+# https://geth.ethereum.org/docs/interface/javascript-console
+geth attach
+
+# geth console. Check some commands
+eth.accounts[0]
+clique.status()
+```
+
+
+## Run 3 Nodes
+
 ```
 # sample bootnode env
 export bootnodeId=ad64602a3bdaa584949760514e44ee08137256b4950026f96b2f2a9cba3ca33b3b2f1e648f023beb5ca1218926c3712e0083b4cd2706a4a5e44e8169f35a3034
 export bootnodeIp=192.168.0.141
+
+cp genesis_test/genesis_sealers_3.json ./genesis.json
 
 # build and run bootnode
 docker build -t gvivid-bootnode -f ./Dockerfile.bootnode .

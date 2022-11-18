@@ -32,8 +32,8 @@ RUN geth init genesis.json
 RUN geth account import --password ~/.accountpassword  ~/.privatekey
 
 ENV address="0x789eeac8071ce0faae85a97cdd83f4677524d74d"
-ENV bootnodeId=""
-ENV bootnodeIp=""
+ENV bootnodeId="ad64602a3bdaa584949760514e44ee08137256b4950026f96b2f2a9cba3ca33b3b2f1e648f023beb5ca1218926c3712e0083b4cd2706a4a5e44e8169f35a3034"
+ENV bootnodeIp="127.0.0.1"
 ENV p2port=30303
 
 
